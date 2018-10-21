@@ -42,6 +42,8 @@ ALLOWED_HOSTS = [
 'localhost',
 '127.0.0.1',
 'jesseduncan.me',
+'http://www.jesseduncan.me',
+'https://www.jesseduncan.me',
 ]
 
 
