@@ -44,6 +44,7 @@ ALLOWED_HOSTS = [
 'jesseduncan.me',
 'http://www.jesseduncan.me',
 'https://www.jesseduncan.me',
+'www.jesseduncan.me',
 'glacial-parrot-tha2m93lrn6vmkjrtb0ff62f.herokudns.com',
 'curly-pumpkin-88fnxasntm232w84ycr87boq.herokudns.com',
 ]
