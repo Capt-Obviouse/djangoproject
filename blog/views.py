@@ -1,13 +1,25 @@
 from django.shortcuts import render
 from .models import Posts
+from django.contrib.auth import logout
 
 # Create your views here.
 
 def home(request):
-    posts = Posts.objects.all()[:10]
+    posts = Posts.objects.all().order_by('-id')[:2]
 
     context = {
         'title': 'Latest Post',
-        'posts': posts
+        'posts': posts,
+        'home': 'active',
     }
     return render(request, 'blog/index.html', context)
+
+def blog(request):
+        posts = Posts.objects.all().order_by('-id')
+
+        context = {
+            'title': 'Latest Post',
+            'posts': posts,
+            'blog': 'active',
+        }
+        return render(request, 'blog/blog.html', context)
