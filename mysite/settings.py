@@ -41,6 +41,7 @@ ALLOWED_HOSTS = [
 'morning-crag-93557.herokuapp.com',
 'localhost',
 '127.0.0.1',
+'jesseduncan.me',
 ]
 
 
