@@ -1,1 +1,334 @@
 Expand your individual website to include a page that calculates the time elapsed since a date entered by a user. The page should include a form that allows users to enter a day, month, and year. The page should then calculate and display the elapsed time in years, months, and days. Note that your program must include code to convert day values in excess of into months, and months in excess of into years.
+
+<p>
+  <form>
+     <label>
+        Pick a date<br>
+        <input type="text" id="tripDate" />
+      </label>
+  </form>
+</p>
+<div id="countdownSection" style="display: none;">
+  <div id="countdownSection">
+     <h4>Elapsed Time</h4>
+     <p id="countdown"></p>
+  </div>
+
+</div>
+<div id="cal" style="display: none;">
+   <div id="prev">&lt; previous</div>
+   <div id="next">next &gt;</div>
+   <table>
+      <caption></caption>
+      <tr>
+         <th>Sun</th>
+         <th>Mon</th>
+         <th>Tue</th>
+         <th>Wed</th>
+         <th>Thu</th>
+         <th>Fri</th>
+         <th>Sat</th>
+      </tr>
+      <tr>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+      </tr>
+      <tr>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+      </tr>
+      <tr>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+      </tr>
+      <tr>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+      </tr>
+      <tr>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+      </tr>
+      <tr>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+      </tr>
+   </table>
+   <p id="close">close <span>&#9746;</span></p>
+</div>
+
+
+
+<script>
+"use strict";  // interpret contents in JavaScript strict mode
+
+// Global Variables
+var dateObject = new Date();
+var countdown;
+var ticket = {};
+
+/********************************************************
+*              Calendar Controls
+********************************************************/
+
+function displayCalendar(whichMonth) {
+  var date;
+  var dateToday = new Date();
+  var dayOfWeek;
+  var daysInMonth;
+  var dateCells;
+  var captionValue;
+  var month;
+  var year;
+  var monthArray = ["January","February","March","April","May","June","July","August","September","October","November","December",];
+
+  if (whichMonth === -1){
+    dateObject.setMonth(dateObject.getMonth() - 1);
+  } else if (whichMonth === 1){
+    dateObject.setMonth(dateObject.getMonth() + 1);
+  }
+
+  month = dateObject.getMonth();
+  year = dateObject.getFullYear();
+  dateObject.setDate(1);
+  dayOfWeek = dateObject.getDay();
+  captionValue = monthArray[month] + " " + year;
+  document.querySelector("#cal table caption").innerHTML = captionValue;
+
+  if(month === 0 || month === 2 || month === 4 || month === 6 || month === 7 || month === 9 || month === 11) {
+    daysInMonth = 31;
+  } else if (month === 1) { // Feb
+    if (year % 4 === 0) { // leap year test
+      if (year % 100 === 0) {
+        // year ending in 00 not a leap year unless divisible by 400
+        if (year % 400 === 0){
+          daysInMonth = 29;
+        } else {
+          daysInMonth = 28;
+        }
+      } else {
+        daysInMonth = 29;
+      }
+    } else {
+      daysInMonth = 28;
+    }
+  } // end feb test
+  else {
+    // Apr, Jun, Sep, Nov
+    daysInMonth = 30;
+  }
+
+  dateCells = document.getElementsByTagName("td");
+  for (var i = 0; i < dateCells.length; i++){
+    // clear existing table dates
+    dateCells[i].innerHTML = "";
+    dateCells[i].className = "";
+  }
+
+  for (var i = dayOfWeek; i < daysInMonth + dayOfWeek; i++){
+    // add dates to days cells
+    dateCells[i].innerHTML = dateObject.getDate();
+    dateCells[i].className = "date";
+    if(dateToday > dateObject){
+      dateCells[i].className = "futuredate";
+    }
+    date = dateObject.getDate() + 1;
+    dateObject.setDate(date);
+  }
+
+  dateObject.setMonth(dateObject.getMonth() - 1);
+  // reset month to month shown
+
+  document.getElementById('cal').style.display = "block";
+  // display calendar if it's not already visible
+
+} // end displayCalendar
+
+function selectDate(event) {
+  if(event === undefined) { // get caller element in IE8
+    event = window.event;
+  }
+
+  var callerElement = event.target || event.srcElement;
+
+  if (callerElement.innerHTML === ""){
+    //cell contains no date, so don't close the calendar
+    document.getElementById('cal').style.display = "block";
+    return false;
+  }
+  dateObject.setDate(callerElement.innerHTML);
+
+  var fullDateToday = new Date();
+  var dateToday = Date.UTC(fullDateToday.getFullYear(), fullDateToday.getMonth(), fullDateToday.getDate());
+  var selectedDate = Date.UTC(dateObject.getFullYear(), dateObject.getMonth(), dateObject.getDate());
+  if (selectedDate >= dateToday) {
+    document.getElementById('cal').style.display = "block";
+    return false;
+  }
+  document.getElementById('tripDate').value = dateObject.toLocaleDateString();
+  hideCalendar();
+  countdown = setInterval(updateCountdown, 1000);
+  document.getElementById("countdownSection").style.display = "block";
+
+  ticket.date = dateObject.toLocaleDateString();
+
+
+} // end select date
+
+function hideCalendar(){
+  document.getElementById('cal').style.display = "none";
+} // end hideCalendar
+
+function prevMo(){
+  displayCalendar(-1);
+} // end prevMo
+
+function nextMo(){
+  displayCalendar(1);
+} // end nextMo
+
+function diff_months(dt2, dt1)
+ {
+
+  var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+   diff /= (60 * 60 * 24 * 7 * 4);
+   diff -= 1;
+  return Math.abs(Math.round(diff));
+
+ }
+
+function updateCountdown() {
+
+  var monthsSince;
+  var yearsSince;
+  var daysSince;
+  var yearsString = "";
+  var monthsString = "";
+  var daysString = "";
+  var dateToday = new Date();
+
+  var dateTo = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate());
+
+  var dateFrom = new Date(dateObject.getFullYear(), dateObject.getMonth());
+
+  var daysSince = Math.floor((dateTo - dateFrom) / 86400000);
+  console.log(daysSince);
+  // Get years
+    yearsSince = Math.floor(daysSince / 365);
+  // Get Months
+    var yearsRemain = daysSince % 365;
+    monthsSince = Math.floor(yearsRemain / 12);
+    var monthsRemain = yearsRemain % 12 * 12;
+    daysSince = monthsRemain;
+
+    console.log(yearsRemain, monthsRemain);
+    console.log(daysSince, yearsSince, monthsSince, daysSince);
+  // Get Days
+
+  // days
+
+
+  // Calculate Days Months and Years
+
+  monthsSince = diff_months(dateTo, dateFrom);
+
+  if(monthsSince > 12){
+    yearsSince = Math.floor(monthsSince / 12);
+    monthsSince = monthsSince % 12;
+  }
+  if(monthsSince > 0){
+    daysSince = dateToday.getDate();
+  } else {
+    daysSince = dateToday.getDate() - dateObject.getDate();
+  }
+
+  if(yearsSince > 0){
+    yearsString = "Years: " + yearsSince + "<br>";
+  }
+  if(monthsSince > 0){
+    monthsString = "Months: " + monthsSince + "<br>";
+  }
+  daysString = "Days: " + daysSince + "<br>";
+  // Update HTML countdown
+
+   document.getElementById("countdown").innerHTML = yearsString + monthsString + daysString;
+
+}
+
+/********************************************************
+*              Setup Event Listeners
+********************************************************/
+function createEventListeners() {
+  var dateField = document.getElementById('tripDate');
+  if(dateField.addEventListener){
+    dateField.addEventListener("click", displayCalendar, false);
+  } else if (dateField.attachEvent) {
+    dateField.attachEvent("onclick", displayCalendar);
+  }
+
+  var dateCells = document.getElementsByTagName('td');
+  if(dateCells[0].addEventListener){
+    for(var i = 0; i < dateCells.length; i++){
+      dateCells[i].addEventListener("click", selectDate, false);
+    }
+  } else if (dateCells[0].attachEvent){
+    for (var i = 0; i < dateCells.length; i++){
+      dateCells[i].attachEvent("onclick", selectDate);
+    }
+  }
+
+  var closeButton = document.getElementById("close");
+  if (closeButton.addEventListener){
+    closeButton.addEventListener("click", hideCalendar, false);
+  } else if (closeButton.attachEvent){
+    closeButton.attachEvent("onclick", hideCalendar);
+  }
+
+  var prevLink = document.getElementById("prev");
+  var nextLink = document.getElementById("next");
+  if(prevLink.addEventListener){
+    prevLink.addEventListener("click", prevMo, false);
+    nextLink.addEventListener("click", nextMo, false);
+  } else if(prevLink.attachEvent){
+    prevLink.attachEvent("onclick", prevMo);
+    nextLink.attachEvent("onclcik", nextMo);
+  }
+
+} // end createEventListener
+
+if (window.addEventListener){
+  window.addEventListener("load", createEventListeners, false);
+} else if(window.attachEvent){
+  window.attachEvent("onload", createEventListeners);
+}
+</script>
