@@ -39,12 +39,21 @@ DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
 
 ALLOWED_HOSTS = [
 'morning-crag-93557.herokuapp.com',
+'localhost',
+'127.0.0.1',
+'jesseduncan.me',
+'http://www.jesseduncan.me',
+'https://www.jesseduncan.me',
+'www.jesseduncan.me',
+'glacial-parrot-tha2m93lrn6vmkjrtb0ff62f.herokudns.com',
+'curly-pumpkin-88fnxasntm232w84ycr87boq.herokudns.com',
 ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'blog',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
