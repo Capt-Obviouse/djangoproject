@@ -53,7 +53,7 @@ function showPosition(position) {
       latElement.innerHTML = "Latitude: " + position.coords.latitude;
       longElement.innerHTML = "Longitude: " + position.coords.longitude;
       if(position.coords.altitude != null){
-        altElement.innerHTML = "Altitude: " + position.coords.altitude;
+        altElement.innerHTML = "Altitude: " + position.coords.altitude + " ft";
       } else {
         altElement.innerHTML = "Altitude: not supported by your device";
       }
