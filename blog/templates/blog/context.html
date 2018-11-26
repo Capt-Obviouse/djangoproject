@@ -1,8 +1,12 @@
 
 {% for post in posts %}
 <h3>{{ post.title }}</h3>
-<p>{{ post.body }}</p>
+
 <h5>Assignment</h5>
 <p>{{ post.assignment }}</p>
+{% if post.body|length > 0 %}
+<h3>Description</h3>
+<p>{{ post.body }}</p>
+{% endif %}
 <hr>
 {% endfor %}
