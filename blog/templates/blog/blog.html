@@ -8,11 +8,18 @@
       {% for post in posts %}
         <div class="card mb-5">
           <div class="card-body">
-            <h3 class="card-title">{{post.title}}</h1>
+            <h3 class="card-title"><a href="chapter/{{ post.page_number}}">{{post.title}}</a></h3>
             <p class="card-text">
-              {% autoescape off %}
-                {{post.body}}
-              {% endautoescape %}
+                {{post.body|truncatewords:60}}
+                {% ifnotequal post.body|truncatewords:30|length post.body|truncatewords:61|length %}
+                <a href="chapter/{{post.page_number}}">Read More</a>
+                {% endifnotequal %}
+                <br>
+                <h4>Assignment</h4>
+                {{ post.assignment|truncatewords:30}}
+                {% ifnotequal post.assignment|truncatewords:30|length post.assignment|truncatewords:61|length %}
+                <a href="chapter/{{post.page_number}}">Read More</a>
+                {% endifnotequal %}
             </p>
           </div>
           <div class="card-footer">
