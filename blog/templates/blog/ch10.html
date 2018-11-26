@@ -20,6 +20,7 @@ Below is a list of just some of the information that a website can gather about 
     <li id="userAgent"></li>
     <li id="lat"></li>
     <li id="long"></li>
+    <li id="alt"></li>
   </ul>
 
 </p>
@@ -31,26 +32,70 @@ Below is a list of just some of the information that a website can gather about 
 <p>"Use strong unique passwords online. Learn how to create strong passwords and passphrases."<br><a href="https://www.staysmartonline.gov.au/protect-yourself/do-things-safely/browsing-web-safely" target="_blank">Stay Smart Online</a>
 </p>
 
-<div id="map"></div>
+<div id="map" style="width: 100%; height: 50vh"></div>
 
 
 <script>
-
-  let lat = document.getElementById("lat");
-  let long = document.getElementById("long");
+  let latElement = document.getElementById("lat");
+  let longElement = document.getElementById("long");
+  let altElement = document.getElementById("long");
 
 function getLocation() {
       if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(showPosition);
       } else {
-          lat.innerHTML = "Geolocation is not supported by this browser.";
-          long.innerHTML = "Geolocation is not supported by this browser.";
+          latElement.innerHTML = "Geolocation is not supported by this browser.";
+          longElement.innerHTML = "Geolocation is not supported by this browser.";
+          altElement.innerHTML = "Geolocation is not supported by this browser.";
       }
   }
 function showPosition(position) {
-      lat.innerHTML = "Latitude: " + position.coords.latitude;
-      long.innerHTML = "Longitude: " + position.coords.longitude;
+      latElement.innerHTML = "Latitude: " + position.coords.latitude;
+      longElement.innerHTML = "Longitude: " + position.coords.longitude;
+      if(position.coords.altitude != null){
+        altElement.innerHTML = "Altitude: " + position.coords.altitude;
+      } else {
+        altElement.innerHTML = "Altitude: not supported by your device";
+      }
+
 }
+
+var map, infoWindow;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 15
+        });
+        infoWindow = new google.maps.InfoWindow;
+
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+            infoWindow.open(map);
+            map.setCenter(pos);
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+      }
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+      }
 
 function displayBrowserInformation(){
     var appName = document.getElementById("appName");
@@ -67,6 +112,7 @@ function displayBrowserInformation(){
     platform.innerHTML = "Operating platform: " + navigator.platform;
     userAgent.innerHTML = "User agent: " + navigator.userAgent;
 }
+
 function checkSecurity(){
   let notice = document.getElementById('notsecure');
 
@@ -89,16 +135,7 @@ pageLoad();
 
 
 </script>
-<script>
-  var map;
-  function initMap() {
-    console.log("initmap");
-    map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: -34.397, lng: 150.644},
-      zoom: 8
-    });
-  }
-</script>
+
 <script async defer
  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBp1LvTedZVQ7maqIhnLQci32nVnqh-lDM&callback=initMap">
  </script>
