@@ -67,10 +67,6 @@ function displayBrowserInformation(){
     platform.innerHTML = "Operating platform: " + navigator.platform;
     userAgent.innerHTML = "User agent: " + navigator.userAgent;
 }
-
-displayBrowserInformation();
-getLocation();
-
 function checkSecurity(){
   let notice = document.getElementById('notsecure');
 
@@ -80,6 +76,18 @@ function checkSecurity(){
     notice.style.display = "block";
   }
 }
+
+function pageLoad(){
+  checkSecurity();
+  displayBrowserInformation();
+  getLocation();
+
+}
+
+pageLoad();
+
+
+
 </script>
 <script>
   var map;
