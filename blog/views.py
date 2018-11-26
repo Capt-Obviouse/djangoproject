@@ -23,3 +23,14 @@ def blog(request):
             'blog': 'active',
         }
         return render(request, 'blog/blog.html', context)
+
+def chapter(request, page):
+    #posts = Posts.objects.all()
+    posts = Posts.objects.filter(page_number__page_number=page)
+
+    context = {
+    'posts': posts,
+    'body': "body stuff",
+    }
+
+    return render(request, 'blog/ch{}.html'.format(page), context)

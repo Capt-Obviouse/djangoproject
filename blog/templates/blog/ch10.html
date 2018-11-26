@@ -1,0 +1,88 @@
+{% extends 'blog/layout.html' %}
+
+{% block content %}
+{% include 'blog/context.html' %}
+<!--
+
+Assignment:
+
+In your individual web site, enhance your existing page about browser security to show users their current location on a map. Note that you must specify a height and width using CSS for the element in which you display the map; these dimensions can be any size you choose. Also enhance the page to display the user’s latitude, longitude, and altitude, with a label for each value.
+-->
+
+<p class="card-text">
+Below is a list of just some of the information that a website can gather about you just from visiting. Read more below about how to stay safe online.
+  <ul>
+    <li id="appName"></li>
+    <li id="appVersion"></li>
+    <li id="geoLocation"></li>
+    <li id="onLine"></li>
+    <li id="platform"></li>
+    <li id="userAgent"></li>
+    <li id="lat"></li>
+    <li id="long"></li>
+  </ul>
+
+</p>
+
+<p class='card-text'>"Clearing cookies that you don’t want or need is the best way to keep sites from tracking you once you’ve navigated to new, unrelated websites."<br><a href="https://www.secjuice.com/how-to-use-the-internet-safely/" target="_blank">SecJuice</a>
+</p>
+<p>"It is very easy to clone a real website and does not take a skilled developer long to produce a very professional-looking, but malicious site."<br><a href="https://www.getsafeonline.org/protecting-your-computer/safe-internet-use/" target="_blank">Get Safe Online</a>
+</p>
+<p>"Use strong unique passwords online. Learn how to create strong passwords and passphrases."<br><a href="https://www.staysmartonline.gov.au/protect-yourself/do-things-safely/browsing-web-safely" target="_blank">Stay Smart Online</a>
+</p>
+
+<div id="map"></div>
+
+
+<script>
+
+  let lat = document.getElementById("lat");
+  let long = document.getElementById("long");
+
+function getLocation() {
+      if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+          lat.innerHTML = "Geolocation is not supported by this browser.";
+          long.innerHTML = "Geolocation is not supported by this browser.";
+      }
+  }
+function showPosition(position) {
+      lat.innerHTML = "Latitude: " + position.coords.latitude;
+      long.innerHTML = "Longitude: " + position.coords.longitude;
+}
+
+function displayBrowserInformation(){
+    var appName = document.getElementById("appName");
+    var appVersion = document.getElementById("appVersion");
+    var geoLocation = document.getElementById("geoLocation");
+    var onLine = document.getElementById("onLine");
+    var platform = document.getElementById("platform");
+    var userAgent = document.getElementById("userAgent");
+
+    appName.innerHTML = "Web browser name: " + navigator.appName;
+    appVersion.innerHTML = "Web browser version: " + navigator.appVersion;
+    geoLocation.innerHTML = "Location: " + navigator.geolocation;
+    onLine.innerHTML = "Online Status: " + navigator.onLine;
+    platform.innerHTML = "Operating platform: " + navigator.platform;
+    userAgent.innerHTML = "User agent: " + navigator.userAgent;
+}
+
+displayBrowserInformation();
+getLocation();
+
+</script>
+<script>
+  var map;
+  function initMap() {
+    console.log("initmap");
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: -34.397, lng: 150.644},
+      zoom: 8
+    });
+  }
+</script>
+<script async defer
+ src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBp1LvTedZVQ7maqIhnLQci32nVnqh-lDM&callback=initMap">
+ </script>
+{% endblock %}
