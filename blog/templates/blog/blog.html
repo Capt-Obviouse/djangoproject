@@ -1,0 +1,36 @@
+{% extends 'blog/layout.html' %}
+{% load staticfiles%}
+
+{% block content %}
+<div class="row">
+  <div class="col mx-5 mt-5">
+    <div class="card-deck">
+      {% for post in posts %}
+        <div class="card mb-5">
+          <div class="card-body">
+            <h3 class="card-title"><a href="chapter/{{ post.page_number}}">{{post.title}}</a></h3>
+            <p class="card-text">
+                {{post.body|truncatewords:60}}
+                {% ifnotequal post.body|truncatewords:30|length post.body|truncatewords:61|length %}
+                <a href="chapter/{{post.page_number}}">Read More</a>
+                {% endifnotequal %}
+                <br>
+                <h4>Assignment</h4>
+                {{ post.assignment|truncatewords:30}}
+                {% ifnotequal post.assignment|truncatewords:30|length post.assignment|truncatewords:61|length %}
+                <a href="chapter/{{post.page_number}}">Read More</a>
+                {% endifnotequal %}
+            </p>
+          </div>
+          <div class="card-footer">
+            <small class="text-muted">Posted on {{post.created_at}}</small>
+          </div>
+        </div>
+        {% if forloop.counter|divisibleby:2 %}
+          <div class="w-100 d-none d-md-block d-lg-block d-xl-block"></div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

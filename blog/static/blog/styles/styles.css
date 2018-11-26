@@ -1,0 +1,21 @@
+.noShow {
+  display: none;
+}
+#errorMessage{
+  display: none;
+}
+li {
+  list-style-type: none;
+}
+p.errorMsg {
+   display: none;
+   color: red;
+}
+#map {
+  height: 100%;
+}
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}

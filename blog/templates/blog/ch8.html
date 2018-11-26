@@ -1,0 +1,249 @@
+{% extends 'blog/layout.html' %}
+
+{% block content %}
+{% include 'blog/context.html' %}
+<!--
+Post:
+This was overall a fairly simple addition of a feedback form. The most difficult section of this was validating the text-box's as a whole and individually to ensure that each section functioned as desired adding elements when other was selected, removing them when its not and at the same time adding and removing validation from the elements as they appear and disappear.
+
+
+Assignment:
+
+Enhance the feedback form in your project to enable users to choose one or more options from a list of at least five options. Include code that adds user selections to either an array or an object, and ensure that if a user deselects one of the options, it is removed from the array or object. Add code to convert the array or object to a string.
+-->
+<div id='errorMessage' class="alert alert-danger" role="alert">
+  Error Messages
+</div>
+
+    <style type="text/css">
+
+    p.errorMsg {
+       display: none;
+       color: red;
+    }
+    </style>
+<div class="row">
+  <div class="col-6">
+  <h2>Feedback Form</h2>
+  <hr>
+   <form onsubmit="event.preventDefault(); submitForm();">
+    <p>
+      <label for="text-box">Email: </label><br>
+      <input type="text" id="text-box" name="text-box">
+    </p>
+    <p id="textBoxError" class="errorMsg"></p>
+    <p id="checkbox-group">
+    <label for="checkBoxs">Areas needing improvement: </label><br>
+    <input class="checkBoxs" type="checkbox" name="layout-box" value="Layout"> Layout<br/>
+    <input class="checkBoxs" type="checkbox" name="content-box" value="Content"> Content<br/>
+    <input class="checkBoxs" type="checkbox" name="navigation-box" value="Navigation"> Navigation<br/>
+    <input class="checkBoxs" type="checkbox" name="images-box" value="Images"> Images<br/>
+    <input class="checkBoxs" type="checkbox" name="other-box" value="Other:" id='other'> Other<br />
+
+
+    </p>
+    <p id="checkBoxError" class="errorMsg"></p>
+    <div id='comment-container' style="display: none;">
+      <label for="text-area">Comments: </label><br>
+      <textarea id="text-area" name="text-area" rows="10" cols="30"></textarea>
+      <p id="textAreaError" class="errorMsg"></p>
+
+    </div>
+
+    <p>
+      <input type="submit" value="Submit Feedback" name="submit-button" id="submit-button">
+    </p>
+  </form>
+  </div>
+  <div id="feedback-div" class="col-6" style="display: none;">
+    <h2>Your Feedback</h2>
+    <hr>
+    <h5>Email</h5>
+    <p id="feedback-email"></p>
+    <h5>Suggested Improvmenets</h5>
+    <p id="feedback-improvements"></p>
+    <p id="feedback-comments"></p>
+  </div>
+</div>
+<script>
+
+  // Global Variables
+  var feedback = {
+    email: "",
+    improvements: "",
+    comments: ""
+  };
+
+  // Functions
+  function submitForm(){
+    if(validateCh6Form()){
+      updateFeedback();
+      alert("Feedback submited");
+    }
+  }
+  function updateFeedback(){
+    let container = document.getElementById('feedback-div');
+    let email = document.getElementById('feedback-email');
+    let improvements = document.getElementById('feedback-improvements');
+    let comments = document.getElementById('feedback-comments');
+
+    container.style.display = "block";
+
+    email.innerHTML = feedback.email;
+    comments.innerHTML = feedback.comments;
+    improvements.innerHTML = feedback.improvements;
+
+  }
+  function validateTextBox(){
+    let errorDiv = document.getElementById("textBoxError");
+    let textBox = document.getElementById("text-box");
+    var emailCheck = /^[_\w\-]+(\.[_\w\-]+)*@[\w\-]+(\.[\w\-]+)*(\.[\D]{2,6})$/;
+
+    // validate something
+    try {
+      feedback.email = textBox.value;
+      updateFeedback();
+
+      if(emailCheck.test(textBox.value) === false){
+        throw "Please provide a valid email address";
+      }
+      errorDiv.style.display = "none";
+      textBox.style.background = "";
+      return true;
+    } catch(msg) {
+      errorDiv.style.display = "block";
+      errorDiv.innerHTML = msg;
+      textBox.style.background = "rgb(255,233,233)";
+    }
+  }
+
+  function validateTextArea() {
+    let textArea = document.getElementById("text-area");
+    let errorDiv = document.getElementById("textAreaError");
+    let container = document.getElementById('comment-container');
+
+    // validate something
+      try {
+        feedback.comments = textArea.value;
+        updateFeedback();
+        if (textArea.value.length < 20) {
+          throw "Please enter more than 20 characters";
+        }
+        errorDiv.style.display = "none";
+        textArea.style.background = "";
+
+        return true;
+      } catch(msg){
+        errorDiv.style.display = "block";
+        errorDiv.innerHTML = msg;
+        textArea.style.background = "rgb(255,233,233)";
+      }
+  }
+  function validateCheckBox() {
+    let errorDiv = document.getElementById("checkBoxError");
+    let checkedValue = false;
+    let other = document.getElementById('other');
+    let parent = document.getElementById('checkbox-group');
+    let boxs = parent.getElementsByTagName('input');
+    let comments = document.getElementById('comment-container');
+    let commentErrorDiv = document.getElementById("textAreaError");
+
+    feedback.improvements = "";
+
+    for (var i=0, len=boxs.length; i<len; i++){
+      if (boxs[i].checked) {
+        checkedValue = true;
+        feedback.improvements += boxs[i].value + "<br>";
+      }
+    }
+    // validate it
+    try {
+      updateFeedback();
+      if (other.checked){
+        comments.style.display = "block";
+        if(!validateTextArea()){
+          throw "Please enter a message to explain your suggested improvement";
+        }
+      } else {
+        feedback.comments = "";
+        updateFeedback();
+        comments.style.display = "none";
+      }
+      if (!checkedValue){
+        feedback.improvements = "";
+        throw "Please select an improvement";
+      }
+      errorDiv.style.display = "none";
+      return true;
+      } catch(msg){
+        errorDiv.style.display = "block";
+        errorDiv.innerHTML = msg;
+      }
+  }
+
+  function attachCheckboxHandlers() {
+    let parent = document.getElementById('checkbox-group');
+
+    let boxs = parent.getElementsByTagName('input');
+
+    for (var i=0, len=boxs.length; i<len; i++){
+      if( boxs[i].type === 'checkbox'){
+        boxs[i].onclick = validateCheckBox;
+      }
+    }
+  }
+
+
+  function validateCh6Form(){
+    let email = document.getElementById('feedback-email');
+    let comments = document.getElementById('feedback-comments');
+    let improvements = document.getElementById('feedback-improvements');
+    let container = document.getElementById('feedback-div');
+
+    if(validateTextBox() && validateCheckBox()){
+      email.innerHTML = feedback.email;
+      comments.innerHTML = feedback.comments;
+      improvements.innerHTML = feedback.improvements;
+      container.style.display = "block";
+      return true;
+    } else {
+      return false;
+    }
+
+  }
+
+  function createEventListeners(){
+    let textBox = document.getElementById("text-box");
+    if(textBox.addEventListener){
+        textBox.addEventListener("change", validateTextBox, false);
+    } else if (textBox.attachEvent){
+      // Use attachEvent for older browser support
+      textBox.attachEvent("onchange", validateTextBox);
+    }
+
+    let textArea = document.getElementById("text-area");
+    if(textArea.addEventListener){
+        textArea.addEventListener("change", validateCheckBox, false);
+    } else if (textArea.attachEvent){
+      // Use attachEvent for older browser support
+      textArea.attachEvent("onchange", validateCheckBox);
+    }
+
+    let checkBoxs = document.getElementsByClassName('checkBoxs');
+    if(checkBoxs.addEventListener){
+      checkBoxs.addEventListener("change", validateCheckBox, false);
+    } else if (checkBoxs.attachEvent){
+      checkBoxs.attachEvent("onchange", validateCheckBox);
+    }
+
+    attachCheckboxHandlers();
+  }
+
+  if (window.addEventListener){
+    window.addEventListener("load", createEventListeners, false);
+  } else if(window.attachEvent){
+    window.attachEvent("onload", createEventListeners);
+  }
+</script>
+
+{% endblock %}

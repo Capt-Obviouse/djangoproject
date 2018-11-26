@@ -1,0 +1,162 @@
+{% extends 'blog/layout.html' %}
+
+{% block content %}
+{% include 'blog/context.html' %}
+<!--
+
+
+Assignment:
+
+Add validation the code for one of the forms on your individual website. First, ensure that your form uses at least three of the following field types: check boxes, text boxes, option buttons, selection lists, and text areas. Then, program validation for your form ensuring that users enter values or make selections in all fields, and verifying at least one other aspect of at least one of the fields. Provide appropriate feedback to users when the form fails validation. Test your completed program until all validation works reliably with different combinations of valid and erroneous data.
+
+
+  -->
+<div id='errorMessage' class="alert alert-danger" role="alert">
+  Error Messages
+</div>
+
+    <style type="text/css">
+
+    p.errorMsg {
+       display: none;
+       color: red;
+    }
+    </style>
+  </HEAD>
+<BODY>
+ <form onsubmit="event.preventDefault(); validateCh6Form();">
+  <p>
+    <label for="text-box">Email: </label><br>
+    <input type="text" id="text-box" name="text-box">
+  </p>
+  <p id="textBoxError" class="errorMsg"></p>
+  <p>
+    <label for="select-box">Subject: </label><br>
+    <select id="select-box" name="select-box">
+      <option></option>
+      <option>Post Content</option>
+      <option>Job Opportunity</option>
+      <option>Other</option>
+    </select>
+  </p>
+  <p id="selectBoxError" class="errorMsg"></p>
+  <p>
+    <label for="text-area">Message: </label><br>
+    <textarea id="text-area" name="text-area" rows="10" cols="30"></textarea>
+  </p>
+  <p id="textAreaError" class="errorMsg"></p>
+
+  <p>
+    <input type="submit" value="Contact Me" name="submit-button" id="submit-button">
+  </p>
+</form>
+
+<script>
+
+  function validateTextBox(){
+    let errorDiv = document.getElementById("textBoxError");
+    let textBox = document.getElementById("text-box");
+    var emailCheck = /^[_\w\-]+(\.[_\w\-]+)*@[\w\-]+(\.[\w\-]+)*(\.[\D]{2,6})$/;
+
+    // validate something
+    try {
+      if(emailCheck.test(textBox.value) === false){
+        throw "Please provide a valide email address";
+
+      }
+      errorDiv.style.display = "none";
+      textBox.style.background = "";
+      return true;
+    } catch(msg) {
+      errorDiv.style.display = "block";
+      errorDiv.innerHTML = msg;
+      textBox.style.background = "rgb(255,233,233)";
+    }
+  }
+
+  function validateTextArea() {
+    let textArea = document.getElementById("text-area");
+    let errorDiv = document.getElementById("textAreaError");
+
+    // validate something
+    try {
+      if(!textArea.value){
+        throw "Please enter a message";
+      } else if (textArea.value.length < 40) {
+        throw "Please enter more than 40 characters";
+      }
+      errorDiv.style.display = "none";
+      textArea.style.background = "";
+      return true;
+    } catch(msg){
+      errorDiv.style.display = "block";
+      errorDiv.innerHTML = msg;
+      textArea.style.background = "rgb(255,233,233)";
+    }
+  }
+
+  function validateSelectBox() {
+    let selectBox = document.getElementById("select-box");
+    let errorDiv = document.getElementById("selectBoxError");
+
+    // validate something
+    try {
+      if(!selectBox.value){
+        throw "Please select a subject";
+      }
+      errorDiv.style.display = "none";
+      selectBox.style.background = "";
+      return true;
+    } catch(msg){
+      errorDiv.style.display = "block";
+      errorDiv.innerHTML = msg;
+      selectBox.style.background = "rgb(255,233,233)";
+    }
+  }
+
+  function validateCh6Form(){
+    let textBox = document.getElementById("text-box");
+    let textArea = document.getElementById("text-area");
+    let selectBox = document.getElementById("select-box");
+
+    if(validateTextBox() && validateTextArea() && validateSelectBox()){
+      alert("Email: " + textBox.value + "\n" + "Subject: " + selectBox.value + "\n" + "Message: " + textArea.value);
+    }
+
+  }
+
+  function createEventListeners(){
+    let textBox = document.getElementById("text-box");
+    if(textBox.addEventListener){
+        textBox.addEventListener("change", validateTextBox);
+    } else if (textBox.attachEvent){
+      // Use attachEvent for older browser support
+      textBox.attachEvent("change", valdiateTextBox);
+    }
+
+    let textArea = document.getElementById("text-area");
+    if(textArea.addEventListener){
+        textArea.addEventListener("change", validateTextArea);
+    } else if (textArea.attachEvent){
+      // Use attachEvent for older browser support
+      textArea.attachEvent("change", validateTextArea);
+    }
+
+    let selectBox = document.getElementById("select-box");
+    if(selectBox.addEventListener){
+        selectBox.addEventListener("change", validateSelectBox);
+    } else if (selectBox.attachEvent){
+      // Use attachEvent for older browser support
+      selectBox.attachEvent("change", validateSelectBox);
+    }
+
+  }
+
+  if (window.addEventListener){
+    window.addEventListener("load", createEventListeners, false);
+  } else if(window.attachEvent){
+    window.attachEvent("onload", createEventListeners);
+  }
+</script>
+
+{% endblock %}
