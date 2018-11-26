@@ -13,7 +13,7 @@ class Pages(models.Model):
 
 class Posts(models.Model):
     title = models.CharField(max_length=200)
-    body = models.TextField(default="")
+    body = models.TextField(default="", blank=True)
     page_number = models.ForeignKey(Pages, default=None, on_delete=models.CASCADE, unique=True)
     created_at = models.DateTimeField(default=timezone.now(), blank=True)
     assignment = models.TextField()
