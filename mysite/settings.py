@@ -11,43 +11,35 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Initialize django-environ
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+
+# reading .env file
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'REDACTED_SECRET_KEY'
-
-import os
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'REDACTED_SECRET_KEY')
-
+SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-
-# SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
+DEBUG = env('DJANGO_DEBUG')
 
 
 
 
 
-ALLOWED_HOSTS = [
-'morning-crag-93557.herokuapp.com',
-'localhost',
-'127.0.0.1',
-'jesseduncan.me',
-'http://www.jesseduncan.me',
-'https://www.jesseduncan.me',
-'www.jesseduncan.me',
-'glacial-parrot-tha2m93lrn6vmkjrtb0ff62f.herokudns.com',
-'curly-pumpkin-88fnxasntm232w84ycr87boq.herokudns.com',
-]
+ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS')
 
 
 # Application definition
@@ -98,10 +90,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'default': env.db()
 }
 
 
@@ -140,20 +129,20 @@ USE_TZ = True
 
 
 
-# Heroku: Update database configuration from $DATABASE_URL.
-import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+# Database configuration is now handled by django-environ
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 # The absolute path to the directory where collectstatic will collect static files for deployment.
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = env('STATIC_ROOT', default=os.path.join(BASE_DIR, 'staticfiles'))
 
 # The URL to use when referring to static files (where they will be served from)
-STATIC_URL = '/static/'
+STATIC_URL = env('STATIC_URL', default='/static/')
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Google Maps API Key
+GOOGLE_MAPS_API_KEY = env('GOOGLE_MAPS_API_KEY', default='')

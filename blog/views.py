@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Posts
 from django.contrib.auth import logout
+from django.conf import settings
 
 # Create your views here.
 
@@ -31,6 +32,7 @@ def chapter(request, page):
     context = {
     'posts': posts,
     'body': "body stuff",
+    'google_maps_api_key': getattr(settings, 'GOOGLE_MAPS_API_KEY', ''),
     }
 
     return render(request, 'blog/ch{}.html'.format(page), context)
